@@ -28,7 +28,7 @@ class Balls(Sprites):
     def __init__(self, screen_width, screen_height, ball_center, ball_number):
         Sprites.__init__(self, screen_width, screen_height, ball_center)
         self.surf1 = pygame.image.load("pool_images/ball" + str(ball_number) + ".png").convert()
-        self.surf1 = pygame.transform.rotate(self.surf1, random.randint(0, 360))
+        #self.surf1 = pygame.transform.rotate(self.surf1, random.randint(0, 360))
         self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
         self.mask = pygame.mask.from_surface(self.surf1)
         self.flag1 = 0
@@ -53,45 +53,31 @@ class Balls(Sprites):
             self.delay1 += 5
             self.last2 = int(time.time()*1000)
 
-        if self.delay1 > 100:
+        if self.delay1 > 200:
             self.speedx = 0
             self.speedy = 0
 
     def bounce1(self):
         #change position on wall bounces
-        #commented portions could be added to increase speed on every wall bounce
-        if self.rect.right < self.screen_width/2 + 324 and self.flag1 == 0:
-            if self.speedx < 0:
-                self.speedx *= -1
-            self.rect.move_ip(self.speedx , 0)
-            if self.rect.right >= self.screen_width/2 + 324:
-                self.flag1 = 1
-        elif self.rect.left > self.screen_width/2 - 324 and self.flag1 == 1:
-            if self.speedx > 0:
-                self.speedx *= -1
-            self.rect.move_ip(self.speedx , 0)
-            if self.rect.left <= self.screen_width/2 - 324:
-                self.flag1 = 0
+        self.rect.move_ip(self.speedx , 0)
+        if self.rect.right > self.screen_width/2 + 324:
+            self.speedx *= -1
+        elif self.rect.left < self.screen_width/2 - 324:
+            self.speedx *= -1
 
-    def bounce2(self):            
-        if self.rect.bottom < self.screen_height/2 + 157 and self.flag2 == 0:
-            if self.speedy < 0:
-                self.speedy *= -1
-            self.rect.move_ip(0, self.speedy )
-            if self.rect.bottom >= self.screen_height/2 + 157:
-                self.flag2 = 1 
-        elif self.rect.top > self.screen_height/2 - 159 and self.flag2 == 1:
-            if self.speedy > 0:
-                self.speedy *= -1
-            self.rect.move_ip(0, self.speedy )
-            if self.rect.top <= self.screen_height/2 - 159:
-                self.flag2 = 0
+    def bounce2(self):
+        self.rect.move_ip(0, self.speedy )            
+        if self.rect.bottom > self.screen_height/2 + 157:
+            self.speedy *= -1
+        elif self.rect.top < self.screen_height/2 - 159:
+            self.speedy *= -1
 
 class QBall(Balls):
     def __init__(self, screen_width, screen_height, center, ball_number):
         Balls.__init__(self, screen_width, screen_height, center, ball_number)
         self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
-        self.speedx = 30
+        self.speedx = 10
+        self.speedy = 0
 
 class Eight_Ball(Balls):
     def __init__(self, screen_width, screen_height, center, ball_number):
