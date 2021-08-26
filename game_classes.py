@@ -27,9 +27,9 @@ class Game():
         self.win = win
         self.text = Game_Text(win, width, height)
         self.game_status = 0
-        self.background = sprite_classes.Background(WIDTH, HEIGHT, "python-pool-game/pool_images/pool_table.png")
-        self.border = sprite_classes.Border(WIDTH, HEIGHT, "python-pool-game/pool_images/pool_border.png")
-        self.holes = sprite_classes.Holes(WIDTH, HEIGHT, "python-pool-game/pool_images/pool_holes.png")
+        self.background = sprite_classes.Background(WIDTH, HEIGHT, "pool_images/pool_table.png")
+        self.border = sprite_classes.Border(WIDTH, HEIGHT, "pool_images/pool_border.png")
+        self.holes = sprite_classes.Holes(WIDTH, HEIGHT, "pool_images/pool_holes.png")
         self.qball = sprite_classes.QBall(self.width, self.height, (width/2 - 200, height/2))
         self.balls = pygame.sprite.Group()
         self.surfaces = pygame.sprite.Group()

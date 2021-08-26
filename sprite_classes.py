@@ -27,7 +27,7 @@ class Sprites(pygame.sprite.Sprite):
 class Balls(Sprites):
     def __init__(self, screen_width, screen_height, ball_center):
         Sprites.__init__(self, screen_width, screen_height, ball_center)
-        self.surf1 = pygame.image.load("python-pool-game/pool_images/ball1.png").convert()
+        self.surf1 = pygame.image.load("pool_images/ball1.png").convert()
         self.surf1.set_colorkey(COLOR_WHITE, RLEACCEL)
         self.mask = pygame.mask.from_surface(self.surf1)
         self.flag1 = 0
