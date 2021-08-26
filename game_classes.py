@@ -27,7 +27,7 @@ class Game():
         self.win = win
         self.text = Game_Text(win, width, height)
         self.game_status = 0
-        self.background = sprite_classes.Background(WIDTH, HEIGHT, "pool_images/pool_table.png")
+        self.background = sprite_classes.Background(WIDTH, HEIGHT, "pool_images/pool_table_all.png")
         self.border = sprite_classes.Border(WIDTH, HEIGHT, "pool_images/pool_border.png")
         self.holes = sprite_classes.Holes(WIDTH, HEIGHT, "pool_images/pool_holes.png")
         self.qball = sprite_classes.QBall(self.width, self.height, (width/2 - 200, height/2))
@@ -61,7 +61,6 @@ class Game():
     #update all sprite positions if 
     def update_sprite_pos(self):
         self.balls.update()
-        self.qball.update()
 
     #main game function
     def update(self):
@@ -94,13 +93,14 @@ class Game():
         self.surfaces.add(self.qball)
 
     def add_sprites(self):
-        self.surfaces.add(self.background, self.border, self.holes)
+        self.surfaces.add(self.background)
         self.add_balls()
             
     def ball_collisions(self):
         for ball in self.balls:
             x = pygame.sprite.spritecollideany(ball, self.balls, collided = pygame.sprite.collide_mask)
             if x != None and x != ball:
+                #print(x.mask.overlap(ball.mask, (5, 5)))
                 if ball.speedx > x.speedx:
                     speed = x.speedx
                     x.speedx = ball.speedx
