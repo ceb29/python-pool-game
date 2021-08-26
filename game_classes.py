@@ -1,4 +1,5 @@
 import pygame
+import random
 import sprite_classes
 from constants import *
 
@@ -30,7 +31,8 @@ class Game():
         self.background = sprite_classes.Background(WIDTH, HEIGHT, "pool_images/pool_table_all.png")
         self.border = sprite_classes.Border(WIDTH, HEIGHT, "pool_images/pool_border.png")
         self.holes = sprite_classes.Holes(WIDTH, HEIGHT, "pool_images/pool_holes.png")
-        self.qball = sprite_classes.QBall(self.width, self.height, (width/2 - 200, height/2))
+        self.qball = sprite_classes.QBall(self.width, self.height, (width/2 - 200, height/2), 0)
+        self.eight_ball = sprite_classes.Eight_Ball(self.width, self.height, (self.width/2 + 200 + 20 * 2, self.height/2), 4)
         self.balls = pygame.sprite.Group()
         self.surfaces = pygame.sprite.Group()
         self.clock = pygame.time.Clock()
@@ -81,15 +83,17 @@ class Game():
         height_spacing = 11
         ball_centers = [(starting_point, self.height/2), #row 1
                         (starting_point + width_spacing, self.height/2 + 11), (starting_point + width_spacing, self.height/2 - height_spacing), #row 2
-                        (starting_point + width_spacing * 2, self.height/2), (starting_point + width_spacing * 2, self.height/2 + height_spacing * 2), (starting_point + width_spacing * 2, self.height/2 - height_spacing * 2), #row 3
+                        (starting_point + width_spacing * 2, self.height/2 + height_spacing * 2), (starting_point + width_spacing * 2, self.height/2 - height_spacing * 2), #row 3
                         (starting_point + width_spacing * 3, self.height/2 + height_spacing), (starting_point + width_spacing * 3, self.height/2 - height_spacing), (starting_point + width_spacing * 3, self.height/2 + height_spacing * 3), (starting_point + width_spacing * 3, self.height/2 - height_spacing * 3), #row 4
                         (starting_point + width_spacing * 4, self.height/2), (starting_point + width_spacing * 4, self.height/2 + height_spacing * 2), (starting_point + width_spacing * 4, self.height/2 - height_spacing * 2), (starting_point + width_spacing * 4, self.height/2 + height_spacing  * 4), (starting_point + width_spacing * 4, self.height/2 - height_spacing * 4)] #row 5
-
+        random.shuffle(ball_centers)
         for i in range(len(ball_centers)):
-            ball = sprite_classes.Balls(self.width, self.height, ball_centers[i])
+            ball = sprite_classes.Balls(self.width, self.height, ball_centers[i], i + 1)
             self.balls.add(ball)
             self.surfaces.add(ball)
+        self.balls.add(self.eight_ball)
         self.balls.add(self.qball)
+        self.surfaces.add(self.eight_ball)
         self.surfaces.add(self.qball)
 
     def add_sprites(self):
@@ -101,24 +105,42 @@ class Game():
             x = pygame.sprite.spritecollideany(ball, self.balls, collided = pygame.sprite.collide_mask)
             if x != None and x != ball:
                 #print(x.mask.overlap(ball.mask, (5, 5)))
-                if ball.speedx > x.speedx:
-                    speed = x.speedx
-                    x.speedx = ball.speedx
-                    ball.speedx /= 2
-                else:
-                    speed = ball.speedx
-                    ball.speedx = x.speedx
-                    x.speedx /= 2
-
-                if ball.speedy > x.speedy:
-                    speed = x.speedy
-                    x.speedy = ball.speedy
-                    ball.speedy /= 2
-                else:
-                    speed = ball.speedy
-                    ball.speedy = x.speedy
-                    x.speedy /= 2
-                
+                if ball.speedx >= 0 and x.speedx >= 0:
+                    if ball.speedx > x.speedx:
+                        speed = x.speedx
+                        x.speedx = ball.speedx
+                        ball.speedx /= 2
+                    else:
+                        speed = ball.speedx
+                        ball.speedx = x.speedx
+                        x.speedx /= 2       
+                elif ball.speedx < 0 and x.speedx < 0:
+                    if ball.speedx < x.speedx:
+                        speed = x.speedx
+                        x.speedx = ball.speedx
+                        ball.speedx /= 2
+                    else:
+                        speed = ball.speedx
+                        ball.speedx = x.speedx
+                        x.speedx /= 2
+                if ball.speedy >= 0 and x.speedy >= 0:
+                    if ball.speedy > x.speedy:
+                        speed = x.speedy
+                        x.speedy = ball.speedy
+                        ball.speedy /= 2
+                    else:
+                        speed = ball.speedy
+                        ball.speedy = x.speedy
+                        x.speedy /= 2
+                elif ball.speedy < 0 and x.speedy < 0:
+                    if ball.speedy < x.speedy:
+                        speed = x.speedy
+                        x.speedy = ball.speedy
+                        ball.speedy /= 2
+                    else:
+                        speed = ball.speedy
+                        ball.speedy = x.speedy
+                        x.speedy /= 2
 
     def check_for_collisions(self):
         self.ball_collisions()
