@@ -107,7 +107,14 @@ class Game():
         self.surfaces.add(self.background)
         self.add_balls()
     
+    def get_sign(self, n):
+        n_sign = 1
+        if n < 0:
+            n_sign = -1
+        return n_sign
+    
     def collision_speed(self, ball1, ball2):
+        #get new speed x and y based off ball1 and ball2 initial speed and collision point
         x = ball2.get_center_x() - ball1.get_center_x()
         y = ball2.get_center_y() - ball1.get_center_y()
         if y == 0:
@@ -117,15 +124,10 @@ class Game():
         elif x == 0:
             speed = ball1.get_speedy()
             ball1.set_speedy(ball2.get_speedy())
-            ball2.set_speedy(speed)
-        #get directions based of speed and collision 
+            ball2.set_speedy(speed) 
         else:
-            x_sign = 1
-            y_sign = 1
-            if x < 0:
-                x_sign = -1 
-            if y < 0:
-                y_sign = -1
+            x_sign = self.get_sign(x)
+            y_sign = self.get_sign(y)
             speed = ball1.get_speed()
             ratio = abs(x / y)
             y_sqr_constant = ratio**2 + 1
@@ -134,7 +136,7 @@ class Game():
             new_x = ratio * new_y
             ball2.set_speedx(new_x * x_sign)
             ball2.set_speedy(new_y * y_sign)
-            ball1.set_speedx(ball1.get_speedx()/2) #need to figure out how to get speed
+            ball1.set_speedx(ball1.get_speedx()/2) #need to figure out what speed should be of faster ball after collision
             ball1.set_speedy(ball1.get_speedy()/2)
 
     def collision(self, ball1, ball2, flag_index):
@@ -158,10 +160,17 @@ class Game():
             list_index = total_balls - 2 + i
             self.collision(self.ball_list[ball_number], self.ball_list[i+1], list_index)
 
+    def collision_ball2(self, total_balls):
+        ball_number = 2
+        for i in range(ball_number, total_balls - 1):
+            list_index = total_balls - 1 + i
+            print(list_index)
+            self.collision(self.ball_list[ball_number], self.ball_list[i+1], list_index)
+
     def ball_collisions(self):
         self.collisions_qball(4)
         self.collisions_eight_ball(4)
-        self.collision(self.ball_list[2], self.ball_list[3], 5)
+        self.collision_ball2(4)
 
     def check_for_collisions(self):
         self.ball_collisions()
