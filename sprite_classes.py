@@ -67,9 +67,7 @@ class Balls(Sprites):
     def set_speedy(self,  speedy):
         self.speedy = speedy
 
-    def update(self):
-        self.center = [self.rect.centerx, self.rect.centery]
-        self.speed = math.sqrt(self.speedx**2 + self.speedy**2)
+    def ball_slow_down(self):
         current1 = int(time.time()*1000)
         if current1 - self.last1 > self.delay1:
             self.bounce1()
@@ -77,11 +75,18 @@ class Balls(Sprites):
             self.last1 = int(time.time()*1000)
         current2 = int(time.time()*1000)
         if current2 - self.last2 > self.delay2:
-            self.delay1 += 5
+            self.delay1 += 2
             self.last2 = int(time.time()*1000)
-        if self.delay1 > 200:
+        if self.delay1 > 100 + self.speed * 10:
             self.speedx = 0
             self.speedy = 0
+
+    def update(self):
+        self.center = [self.rect.centerx, self.rect.centery]
+        self.speed = math.sqrt(self.speedx**2 + self.speedy**2)
+        #self.bounce1()
+        #self.bounce2()
+        self.ball_slow_down()
 
     def bounce1(self):
         #change position on wall bounces
@@ -102,7 +107,7 @@ class QBall(Balls):
     def __init__(self, screen_width, screen_height, center, ball_number):
         Balls.__init__(self, screen_width, screen_height, center, ball_number)
         self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
-        self.speedx = 20
+        self.speedx = 10
         self.speedy = 0
 
 class Eight_Ball(Balls):
