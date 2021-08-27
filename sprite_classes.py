@@ -14,6 +14,12 @@ class Sprites(pygame.sprite.Sprite):
     def get_center(self):
         return self.center
 
+    def get_center_x(self):
+        return self.center[0]
+
+    def get_center_y(self):
+        return self.center[1]
+
     def out_of_bounds(self):
         if self.rect.right > self.screen_width:
             self.rect.move_ip(-self.screen_width, 0)
@@ -41,18 +47,29 @@ class Balls(Sprites):
         self.delay1 = 1
         self.delay2 = 100
 
+    def get_speedx(self):
+        return self.speedx
+
+    def get_speedy(self):
+        return self.speedy
+
+    def set_speedx(self, speedx):
+        self.speedx = speedx
+
+    def set_speedy(self,  speedy):
+        self.speedy = speedy
+
     def update(self):
+        self.center = [self.rect.centerx, self.rect.centery]
         current1 = int(time.time()*1000)
         if current1 - self.last1 > self.delay1:
             self.bounce1()
             self.bounce2()
             self.last1 = int(time.time()*1000)
-
         current2 = int(time.time()*1000)
         if current2 - self.last2 > self.delay2:
             self.delay1 += 5
             self.last2 = int(time.time()*1000)
-
         if self.delay1 > 200:
             self.speedx = 0
             self.speedy = 0

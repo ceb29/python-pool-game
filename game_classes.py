@@ -2,6 +2,7 @@ import pygame
 import random
 import sprite_classes
 from constants import *
+import math
 
 class Game_Text():
     def __init__(self, win, width, height):
@@ -31,7 +32,7 @@ class Game():
         self.background = sprite_classes.Background(WIDTH, HEIGHT, "pool_images/pool_table_all.png")
         self.border = sprite_classes.Border(WIDTH, HEIGHT, "pool_images/pool_border.png")
         self.holes = sprite_classes.Holes(WIDTH, HEIGHT, "pool_images/pool_holes.png")
-        self.qball = sprite_classes.QBall(self.width, self.height, (width/2 - 200, height/2), 0)
+        self.qball = sprite_classes.QBall(self.width, self.height, (width/2 - 200, height/2-5), 0)
         self.eight_ball = sprite_classes.Eight_Ball(self.width, self.height, (self.width/2 + 200 + 20 * 2, self.height/2), 4)
         self.balls = pygame.sprite.Group()
         self.surfaces = pygame.sprite.Group()
@@ -96,7 +97,6 @@ class Game():
         self.surfaces.add(self.eight_ball)
         self.balls.add(self.eight_ball)
         self.ball_list.append(self.eight_ball)
-
         for i in range(len(ball_centers)):
             ball = sprite_classes.Balls(self.width, self.height, ball_centers[i], i + 1)
             self.ball_list.append(ball)
@@ -108,24 +108,47 @@ class Game():
         self.add_balls()
     
     def collision(self, ball1, ball2, flag_index):
-        if pygame.sprite.collide_mask(ball1, ball2) != None and self.flag_list[flag_index] == 0:
-            speed = ball1.speedx
-            ball1.speedx = ball2.speedx
-            ball2.speedx = speed
+        collision_coord = pygame.sprite.collide_mask(ball1, ball2)
+        if collision_coord != None and self.flag_list[flag_index] == 0:
+            x = ball2.get_center_x() - ball1.get_center_x()
+            y = ball2.get_center_y() - ball1.get_center_y()
+            if y == 0:
+                speed = ball1.get_speedx()
+                ball1.set_speedx(ball2.get_speedx())
+                ball2.set_speedx(speed)
+            elif x == 0:
+                speed = ball1.get_speedy()
+                ball1.set_speedx(ball2.get_speedy())
+                ball2.set_speedx(speed)
+            #get directions based of speed and collision 
+            else:
+                x_sign = 1
+                y_sign = 1
+                if x < 0:
+                    x_sign = -1 
+                if y < 0:
+                    y_sign = -1
+                speed = 10
+                ratio = abs(x / y)
+                y_sqr_constant = ratio**2 + 1
+                y_sqr = (speed**2)/y_sqr_constant
+                new_y = math.sqrt(y_sqr)
+                new_x = ratio * new_y
+                ball2.set_speedx(new_x * x_sign)
+                ball2.set_speedy(new_y * y_sign)
             self.flag_list[flag_index] = 1
-        elif pygame.sprite.collide_mask(ball1, ball2) == None:
+        elif collision_coord == None:
             self.flag_list[flag_index] = 0
 
     def collisions_qball(self, total_balls):
-        #  for i in range(0, total_balls - 1):
-        #      self.collision(self.ball_list[0], self.ball_list[i+1], i)
-        self.collision(self.ball_list[0], self.ball_list[1], 0)
-        self.collision(self.ball_list[0], self.ball_list[2], 1)
-        self.collision(self.ball_list[0], self.ball_list[3], 2)
+        for i in range(0, total_balls - 1):
+            self.collision(self.ball_list[0], self.ball_list[i+1], i)
     
     def collisions_eight_ball(self, total_balls):
-        self.collision(self.ball_list[1], self.ball_list[2], 3)
-        self.collision(self.ball_list[1], self.ball_list[3], 4)
+        ball_number = 1
+        for i in range(ball_number, total_balls - 1):
+            list_index = total_balls - 2 + i
+            self.collision(self.ball_list[ball_number], self.ball_list[i+1], list_index)
 
     def ball_collisions(self):
         self.collisions_qball(4)

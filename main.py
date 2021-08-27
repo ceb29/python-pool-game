@@ -12,7 +12,7 @@ win = pygame.display.set_mode((WIDTH, HEIGHT)) #creates a game window with given
 def main():
     running = True
     pygame.mouse.set_visible(False)
-    game = Game(60, COLOR_WHITE, win, WIDTH, HEIGHT)
+    game = Game(120, COLOR_WHITE, win, WIDTH, HEIGHT)
     game.start()
     while running:
         for event in pygame.event.get():
@@ -24,7 +24,12 @@ def main():
             elif event.type == MOUSEBUTTONDOWN and game.get_status() == 0: #update orientation or fire projectile
                 button_pressed = event.button
                # game.player1.change_front(button_pressed)
-                #if event.button == 1:
+                if event.button == 1:
+                    game.qball.speedx += 1
+                    print(game.qball.speedx)
+                if event.button == 3:
+                    game.qball.speedx -= 1
+                    print(game.qball.speedx)
             elif event.type == pygame.QUIT:
                 running = False
         game.update()  
