@@ -120,11 +120,11 @@ class Game():
         if y == 0:
             speed = ball1.get_speedx()
             ball1.set_speedx(ball2.get_speedx())
-            ball2.set_speedx(speed/random.randint(1, 4))
+            ball2.set_speedx(round(speed/random.randint(1, 4)))
         elif x == 0:
             speed = ball1.get_speedy()
             ball1.set_speedy(ball2.get_speedy())
-            ball2.set_speedy(speed/random.randint(1, 4)) 
+            ball2.set_speedy(round(speed/random.randint(1, 4))) 
         else:
             x_sign = self.get_sign(x)
             y_sign = self.get_sign(y)
@@ -136,8 +136,8 @@ class Game():
             new_x = ratio * new_y
             ball2.set_speedx(round(new_x) * x_sign)
             ball2.set_speedy(round(new_y) * y_sign)
-            ball1.set_speedx(ball1.get_speedx()/random.randint(1, 4)) #need to figure out what speed should be of faster ball after collision
-            ball1.set_speedy(ball1.get_speedy()/random.randint(1, 4))
+            ball1.set_speedx(round(ball1.get_speedx()/random.randint(1, 4))) #need to figure out what speed should be of faster ball after collision
+            ball1.set_speedy(round(ball1.get_speedy()/random.randint(1, 4)))
 
     def collision(self, ball1, ball2, flag_index):
         collision_coord = pygame.sprite.collide_mask(ball1, ball2)
