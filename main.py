@@ -11,8 +11,8 @@ win = pygame.display.set_mode((WIDTH, HEIGHT)) #creates a game window with given
 
 def main():
     running = True
-    pygame.mouse.set_visible(False)
-    game = Game(120, COLOR_WHITE, win, WIDTH, HEIGHT)
+    #pygame.mouse.set_visible(False)
+    game = Game(60, COLOR_WHITE, win, WIDTH, HEIGHT)
     game.start()
     while running:
         for event in pygame.event.get():

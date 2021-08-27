@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 import time
 from pygame.constants import RLEACCEL #buttons used in game
 from constants import COLOR_BLACK, COLOR_WHITE
@@ -41,17 +42,24 @@ class Balls(Sprites):
         self.flag2 = 0
         self.speedx = 0
         self.speedy = 0
+        self.speed = math.sqrt(self.speedx**2 + self.speedy**2)
         self.rect = self.surf1.get_rect(center = ball_center)
         self.last1 = int(time.time()*1000)
         self.last2 = int(time.time()*1000)
         self.delay1 = 1
         self.delay2 = 100
 
+    def get_speed(self):
+        return self.speed
+
     def get_speedx(self):
         return self.speedx
 
     def get_speedy(self):
         return self.speedy
+
+    def set_speed(self, speed):
+        self.speed = speed
 
     def set_speedx(self, speedx):
         self.speedx = speedx
@@ -61,6 +69,7 @@ class Balls(Sprites):
 
     def update(self):
         self.center = [self.rect.centerx, self.rect.centery]
+        self.speed = math.sqrt(self.speedx**2 + self.speedy**2)
         current1 = int(time.time()*1000)
         if current1 - self.last1 > self.delay1:
             self.bounce1()
@@ -93,7 +102,7 @@ class QBall(Balls):
     def __init__(self, screen_width, screen_height, center, ball_number):
         Balls.__init__(self, screen_width, screen_height, center, ball_number)
         self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
-        self.speedx = 10
+        self.speedx = 20
         self.speedy = 0
 
 class Eight_Ball(Balls):
