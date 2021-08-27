@@ -107,7 +107,7 @@ class QBall(Balls):
     def __init__(self, screen_width, screen_height, center, ball_number):
         Balls.__init__(self, screen_width, screen_height, center, ball_number)
         self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
-        self.speedx = 10
+        self.speedx = 20
         self.speedy = 0
 
 class Eight_Ball(Balls):
