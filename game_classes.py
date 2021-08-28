@@ -32,7 +32,7 @@ class Game():
         self.ball_status = 0
         self.background = sprite_classes.Pool_Table(WIDTH, HEIGHT, "pool_images/pool_table_all.png")
         self.border = sprite_classes.Border(WIDTH, HEIGHT, "pool_images/pool_border.png")
-        self.holes = sprite_classes.Holes(WIDTH, HEIGHT, "pool_images/pool_holes.png")
+        self.pockets = sprite_classes.Pockets(WIDTH, HEIGHT, "pool_images/pool_holes.png")
         self.qball = sprite_classes.QBall(self.width, self.height, (width/2 - 200, height/2+5), 0)
         self.eight_ball = sprite_classes.Eight_Ball(self.width, self.height, (self.width/2 + 200 + 20 * 2, self.height/2), 4)
         self.balls = pygame.sprite.Group()
@@ -62,20 +62,28 @@ class Game():
         for i in range (number_list_elements):
             self.flag_list.append(0)
 
+    #functions for cleaning up sprites
+    def remove_balls(self):
+        self.ball_list = []
+        for ball in self.balls:
+            ball.kill()
+
+    def remove_sprites(self):
+        self.remove_balls()
+        self.surfaces = pygame.sprite.Group()
+
     #functions for game progression
     def start(self):
-        self.text.create_text()
         self.create_flag_list()
         self.add_sprites()
 
-    def next_level(self):
-        self.surfaces = pygame.sprite.Group()
-        self.add_sprites()
-
     def restart(self):
+        self.remove_sprites()
+        self.balls_in_pocket = 0
+        self.create_flag_list()
         self.add_sprites()
         self.game_status = 0
-
+    
     def set_all_move_status(self, status):
         for i in range(len(self.ball_list)):
             self.ball_list[i].set_move_status(status)
@@ -96,7 +104,7 @@ class Game():
             self.win.blit(s.surf1, s.rect)
     
     def draw_stick(self):
-            self.background.draw_line((self.qball.get_center_x(), self.qball.get_center_y()), pygame.mouse.get_pos())
+        self.background.draw_line(self.qball.get_center(), pygame.mouse.get_pos())
             
     def update_stick_speed(self):
         length = self.background.get_line_length()
@@ -142,12 +150,12 @@ class Game():
             self.draw_surfaces()
             self.update_sprite_pos()
             self.check_for_collisions()
-        #else:
-            #self.remove_sprites()
         pygame.display.flip()
         self.clock.tick(self.clock_speed) 
     
     def add_q_and_eight_balls(self):
+        self.qball = sprite_classes.QBall(self.width, self.height, (self.width/2 - 200, self.height/2+5), 0)
+        self.eight_ball = sprite_classes.Eight_Ball(self.width, self.height, (self.width/2 + 200 + 20 * 2, self.height/2), 4)
         self.balls.add(self.qball)
         self.ball_list.append(self.qball)
         self.surfaces.add(self.qball)
@@ -160,7 +168,7 @@ class Game():
         width_spacing = 20
         height_spacing = 11
         ball_centers = [(starting_point, self.height/2), #row 1
-                        (starting_point + width_spacing, self.height/2 + 11), (starting_point + width_spacing, self.height/2 - height_spacing), #row 2
+                        (starting_point + width_spacing, self.height/2 + height_spacing), (starting_point + width_spacing, self.height/2 - height_spacing), #row 2
                         (starting_point + width_spacing * 2, self.height/2 + height_spacing * 2), (starting_point + width_spacing * 2, self.height/2 - height_spacing * 2), #row 3
                         (starting_point + width_spacing * 3, self.height/2 + height_spacing), (starting_point + width_spacing * 3, self.height/2 - height_spacing), (starting_point + width_spacing * 3, self.height/2 + height_spacing * 3), (starting_point + width_spacing * 3, self.height/2 - height_spacing * 3), #row 4
                         (starting_point + width_spacing * 4, self.height/2), (starting_point + width_spacing * 4, self.height/2 + height_spacing * 2), (starting_point + width_spacing * 4, self.height/2 - height_spacing * 2), (starting_point + width_spacing * 4, self.height/2 + height_spacing  * 4), (starting_point + width_spacing * 4, self.height/2 - height_spacing * 4)] #row 5
@@ -232,22 +240,28 @@ class Game():
                 flag_number += 1
 
     def ball_pocket_collisions(self):
-        ball_in_pocket = pygame.sprite.spritecollideany(self.holes, self.balls, collided=pygame.sprite.collide_mask)
+        ball_in_pocket = pygame.sprite.spritecollideany(self.pockets, self.balls, collided=pygame.sprite.collide_mask)
         if ball_in_pocket != None:
             self.balls_in_pocket += 1
             ball_in_pocket.set_pocket_status(1)
             ball_in_pocket.set_pocket_number(self.balls_in_pocket)
             
-
     def check_for_collisions(self):
         self.ball_collisions()
         self.ball_pocket_collisions()
 
-    #functions for cleaning up sprites
-    def remove_balls(self):
-        for ball in self.balls:
-            ball.kill()
+    def left_click(self):
+        if self.ball_status == 0:
+            if self.qball.get_locked() == 0:
+                #lock qball position
+                self.qball.set_locked(1)
+            elif self.qball.get_locked() == 1:
+                #shoot ball
+                self.update_stick_speed()
 
-    def remove_sprites(self):
-        self.remove_balls()
-        self.surfaces = pygame.sprite.Group()
+    def right_click(self):
+        #place qball with mouse
+        if self.ball_status == 0:
+            if self.qball.get_locked() == 1:
+                self.background.clear()
+                self.qball.set_locked(0)

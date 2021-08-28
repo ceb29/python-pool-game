@@ -1,8 +1,7 @@
 import pygame
-import random
 import math
 import time
-from pygame.constants import RLEACCEL #buttons used in game
+from pygame.constants import RLEACCEL
 from constants import COLOR_BLACK, COLOR_WHITE
 
 class Sprites(pygame.sprite.Sprite):
@@ -36,11 +35,8 @@ class Balls(Sprites):
         Sprites.__init__(self, screen_width, screen_height, ball_center)
         self.ball_number = ball_number
         self.surf1 = pygame.image.load("pool_images/ball" + str(ball_number) + ".png").convert()
-        #self.surf1 = pygame.transform.rotate(self.surf1, random.randint(0, 360))
         self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
         self.mask = pygame.mask.from_surface(self.surf1)
-        self.flag1 = 0
-        self.flag2 = 0
         self.speedx = 0
         self.speedy = 0
         self.speed = math.sqrt(self.speedx**2 + self.speedy**2)
@@ -94,8 +90,8 @@ class Balls(Sprites):
         current1 = int(time.time()*1000)
         if current1 - self.last1 > self.delay1:
             self.move_ball()
-            self.bounce1()
-            self.bounce2()
+            self.bounce_x()
+            self.bounce_y()
             self.last1 = int(time.time()*1000)
         current2 = int(time.time()*1000)
         if current2 - self.last2 > self.delay2:
@@ -114,20 +110,22 @@ class Balls(Sprites):
             self.center = [self.rect.centerx, self.rect.centery]
             self.speed = math.sqrt(self.speedx**2 + self.speedy**2)
         else:
+            #place balls on side of pool table if pocketed
             self.speed = 0
             self.speedx = 0
             self.speedy = 0
             self.center = (20, self.pocket_number * 25)
             self.rect = self.surf1.get_rect(center = self.center)
 
-    def bounce1(self):
-        #change position on wall bounces
+    def bounce_x(self):
+        #change x position on wall bounces
         if self.rect.right > self.screen_width/2 + 324 and self.speedx > 0:
             self.speedx *= -1
         elif self.rect.left < self.screen_width/2 - 324 and self.speedx < 0:
             self.speedx *= -1
 
-    def bounce2(self):          
+    def bounce_y(self):
+        #change y position on wall bounces      
         if self.rect.bottom > self.screen_height/2 + 157 and self.speedy > 0:
             self.speedy *= -1
         elif self.rect.top < self.screen_height/2 - 159 and self.speedy < 0:
@@ -149,11 +147,10 @@ class QBall(Balls):
         self.locked = lock
 
     def change_position_mouse(self):
+        #updates the position of player sprite based off of mouse cursor location
         if self.locked == 0:
             self.pocket_status = 0
-            #updates the position of player sprite based off of mouse cursor location
             self.position = pygame.mouse.get_pos()
-            #if self.position[0] > self.player_size-25 and self.position[0] < 475 and self.position[1] < 475 and self.position[1] > 22: #only update mouse postion if inside window
             self.rect.center = pygame.mouse.get_pos() 
 
 class Eight_Ball(Balls):
@@ -161,11 +158,6 @@ class Eight_Ball(Balls):
         Balls.__init__(self, screen_width, screen_height, center, ball_number)
         self.surf1 = pygame.image.load("pool_images/ball15.png").convert()
         self.surf1.set_colorkey(COLOR_WHITE, RLEACCEL)
-
-class QBall_line(Sprites):
-    def __init__(self, screen_width, screen_height, center):
-        Sprites.__init__(self, screen_width, screen_height, center)
-
 
 class Background(Sprites):
     def __init__(self, screen_width, screen_height, file_image):
@@ -176,7 +168,6 @@ class Background(Sprites):
         self.mask = pygame.mask.from_surface(self.surf1)
         self.rect = self.surf1.get_rect(center = (self.screen_width/2,self.screen_height/2))
 
-    
 class Pool_Table(Background):
     def __init__(self, screen_width, screen_height, file_image):
         Background.__init__(self, screen_width, screen_height, file_image)
@@ -193,10 +184,12 @@ class Pool_Table(Background):
         return self.line_end_point
 
     def clear(self):
+        #reset background
         self.surf1 = pygame.image.load(self.file_image).convert()
         self.surf1.set_colorkey(COLOR_WHITE, RLEACCEL)
 
     def reverse_and_mult(self, start, end, multiple):
+        #mirror and scale it the end point
         if end[0] > start[0]:
             reversed_endx =  start[0] - multiple * (end[0] - start[0])
         else:
@@ -209,6 +202,7 @@ class Pool_Table(Background):
         return reversed_end
 
     def calculate_length(self, start, end):
+        #calculate line length based off start and end point
         length_x = end[0] - start[0]
         length_y = end[1] - start[1]
         line_length = math.sqrt(length_x**2 + length_y**2)
@@ -241,6 +235,7 @@ class Pool_Table(Background):
         return new_end
 
     def draw_line(self, start, end):
+        #draw a line that determines direction and speed of qball
         self.update_line_length(start, end)
         if self.position != end:
             self.clear()
@@ -256,6 +251,6 @@ class Border(Background):
     def __init__(self, screen_width, screen_height, file_image):
         Background.__init__(self, screen_width, screen_height, file_image)
 
-class Holes(Background):
+class Pockets(Background):
     def __init__(self, screen_width, screen_height, file_image):
         Background.__init__(self, screen_width, screen_height, file_image)

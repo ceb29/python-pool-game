@@ -17,20 +17,13 @@ def main():
             if event.type == KEYDOWN: #exit game if esc key pressed
                 if event.key == K_ESCAPE: 
                     running = False
-                if event.key == K_RETURN and game.get_status() == 1:
+                if event.key == K_RETURN:
                         game.restart()
             elif event.type == MOUSEBUTTONDOWN and game.get_status() == 0:
                 if event.button == 1:
-                    if game.get_ball_status() == 0:
-                        if game.qball.get_locked() == 0:
-                            game.qball.set_locked(1)
-                        elif game.qball.get_locked() == 1:
-                            game.update_stick_speed()
+                    game.left_click()
                 if event.button == 3:
-                    if game.get_ball_status() == 0:
-                        if game.qball.get_locked() == 1:
-                            game.background.clear()
-                            game.qball.set_locked(0)
+                    game.right_click()
             elif event.type == pygame.QUIT:
                 running = False
         game.update()  
