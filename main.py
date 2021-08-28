@@ -13,7 +13,6 @@ def main():
     game = Game(120, COLOR_WHITE, win, WIDTH, HEIGHT)
     game.start()
     while running:
-        print
         for event in pygame.event.get():
             if event.type == KEYDOWN: #exit game if esc key pressed
                 if event.key == K_ESCAPE: 
