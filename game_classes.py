@@ -109,13 +109,13 @@ class Game():
         end_point = self.background.get_line_end_point()
         x = end_point[0] - self.qball.get_center_x()
         y = end_point[1] - self.qball.get_center_y()
+        x_sign = self.get_sign(x)
+        y_sign = self.get_sign(y)
         if y == 0:
-            self.qball.set_speedx(self.stick_speed)
+            self.qball.set_speedx(self.stick_speed * x_sign)
         elif x == 0:
-            self.qball.set_speedy(self.stick_speed)
+            self.qball.set_speedy(self.stick_speed * y_sign)
         else:
-            x_sign = self.get_sign(x)
-            y_sign = self.get_sign(y)
             speed = self.stick_speed
             ratio = abs(x / y)
             y_sqr_constant = ratio**2 + 1
