@@ -122,15 +122,15 @@ class Balls(Sprites):
 
     def bounce1(self):
         #change position on wall bounces
-        if self.rect.right > self.screen_width/2 + 324:
+        if self.rect.right > self.screen_width/2 + 324 and self.speedx > 0:
             self.speedx *= -1
-        elif self.rect.left < self.screen_width/2 - 324:
+        elif self.rect.left < self.screen_width/2 - 324 and self.speedx < 0:
             self.speedx *= -1
 
     def bounce2(self):          
-        if self.rect.bottom > self.screen_height/2 + 157:
+        if self.rect.bottom > self.screen_height/2 + 157 and self.speedy > 0:
             self.speedy *= -1
-        elif self.rect.top < self.screen_height/2 - 159:
+        elif self.rect.top < self.screen_height/2 - 159 and self.speedy < 0:
             self.speedy *= -1
 
 class QBall(Balls):
