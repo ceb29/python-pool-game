@@ -79,6 +79,7 @@ class Game():
 
     def restart(self):
         self.remove_sprites()
+        self.background.clear()
         self.balls_in_pocket = 0
         self.create_flag_list()
         self.add_sprites()
