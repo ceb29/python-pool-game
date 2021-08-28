@@ -1,8 +1,5 @@
 #pool game
 #game to learn pygame and practice using classes in python
-#
-#need to account for faster ball being hit by slower ball in same direction
-#
 import pygame
 from game_classes import Game
 from pygame.constants import K_RETURN, MOUSEBUTTONDOWN, K_ESCAPE, KEYDOWN #buttons used in game
@@ -13,7 +10,6 @@ win = pygame.display.set_mode((WIDTH, HEIGHT)) #creates a game window with given
 
 def main():
     running = True
-    #pygame.mouse.set_visible(False)
     game = Game(60, COLOR_WHITE, win, WIDTH, HEIGHT)
     game.start()
     while running:
@@ -24,9 +20,7 @@ def main():
                     running = False
                 if event.key == K_RETURN and game.get_status() == 1:
                         game.restart()
-            elif event.type == MOUSEBUTTONDOWN and game.get_status() == 0: #update orientation or fire projectile
-                button_pressed = event.button
-               # game.player1.change_front(button_pressed)
+            elif event.type == MOUSEBUTTONDOWN and game.get_status() == 0:
                 if event.button == 1:
                     if game.get_ball_status() == 0:
                         if game.qball.get_locked() == 0:

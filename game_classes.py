@@ -101,6 +101,8 @@ class Game():
     def update_stick_speed(self):
         length = self.background.get_line_length()
         self.stick_speed = length / 10
+        if self.stick_speed == 0:
+            self.stick_speed = 1
         self.qball_hit()
 
     def qball_hit(self):
