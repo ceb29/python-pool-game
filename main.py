@@ -1,6 +1,8 @@
 #pool game
 #game to learn pygame and practice using classes in python
-
+#
+#need to account for faster ball being hit by slower ball in same direction
+#
 import pygame
 from game_classes import Game
 from pygame.constants import K_RETURN, MOUSEBUTTONDOWN, K_ESCAPE, KEYDOWN #buttons used in game
@@ -25,11 +27,16 @@ def main():
                 button_pressed = event.button
                # game.player1.change_front(button_pressed)
                 if event.button == 1:
-                    game.qball.speedx += 1
-                    print(game.qball.speedx)
+                    if game.get_ball_status() == 0:
+                        if game.qball.get_locked() == 0:
+                            game.qball.set_locked(1)
+                        elif game.qball.get_locked() == 1:
+                            game.update_stick_speed()
                 if event.button == 3:
-                    game.qball.speedx -= 1
-                    print(game.qball.speedx)
+                    if game.get_ball_status() == 0:
+                        if game.qball.get_locked() == 1:
+                            game.background.clear()
+                            game.qball.set_locked(0)
             elif event.type == pygame.QUIT:
                 running = False
         game.update()  
