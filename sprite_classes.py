@@ -34,6 +34,7 @@ class Sprites(pygame.sprite.Sprite):
 class Balls(Sprites):
     def __init__(self, screen_width, screen_height, ball_center, ball_number):
         Sprites.__init__(self, screen_width, screen_height, ball_center)
+        self.ball_number = ball_number
         self.surf1 = pygame.image.load("pool_images/ball" + str(ball_number) + ".png").convert()
         #self.surf1 = pygame.transform.rotate(self.surf1, random.randint(0, 360))
         self.surf1.set_colorkey(COLOR_BLACK, RLEACCEL)
@@ -49,6 +50,8 @@ class Balls(Sprites):
         self.delay1 = 1
         self.delay2 = 100
         self.move_status = 0
+        self.pocket_status = 0
+        self.pocket_number = 0
 
     def get_speed(self):
         return self.speed
@@ -77,6 +80,12 @@ class Balls(Sprites):
     def set_move_status(self, status):
         self.move_status = status
 
+    def set_pocket_status(self, status):
+        self.pocket_status = status
+
+    def set_pocket_number(self, number):
+        self.pocket_number = number
+
     def move_ball(self):
         self.rect.move_ip(self.speedx , 0)
         self.rect.move_ip(0, self.speedy)  
@@ -97,12 +106,19 @@ class Balls(Sprites):
             self.speedy = 0
 
     def update(self):
-        if self.move_status == 1:
-            self.ball_slow_down()
+        if self.pocket_status == 0:
+            if self.move_status == 1:
+                self.ball_slow_down()
+            else:
+                self.delay1 = 1
+            self.center = [self.rect.centerx, self.rect.centery]
+            self.speed = math.sqrt(self.speedx**2 + self.speedy**2)
         else:
-            self.delay1 = 1
-        self.center = [self.rect.centerx, self.rect.centery]
-        self.speed = math.sqrt(self.speedx**2 + self.speedy**2)
+            self.speed = 0
+            self.speedx = 0
+            self.speedy = 0
+            self.center = (20, self.pocket_number * 25)
+            self.rect = self.surf1.get_rect(center = self.center)
 
     def bounce1(self):
         #change position on wall bounces
@@ -134,6 +150,7 @@ class QBall(Balls):
 
     def change_position_mouse(self):
         if self.locked == 0:
+            self.pocket_status = 0
             #updates the position of player sprite based off of mouse cursor location
             self.position = pygame.mouse.get_pos()
             #if self.position[0] > self.player_size-25 and self.position[0] < 475 and self.position[1] < 475 and self.position[1] > 22: #only update mouse postion if inside window

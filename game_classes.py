@@ -44,6 +44,7 @@ class Game():
         self.flag_list = []
         self.number_balls = 16
         self.stick_speed = 0
+        self.balls_in_pocket = 0
 
     def get_ball_status(self):
         return self.ball_status
@@ -127,7 +128,6 @@ class Game():
         if self.qball.locked == 0:
             self.qball.change_position_mouse()
         self.balls.update()
-        #print(self.qball.get_speedx())
 
     #main game function
     def update(self):
@@ -187,18 +187,17 @@ class Game():
         #get new speed x and y based off ball1 and ball2 initial speed and collision point
         x = ball2.get_center_x() - ball1.get_center_x()
         y = ball2.get_center_y() - ball1.get_center_y()
-        rand_int = random.randint(1, 4)
+        rand_int1 = random.randint(2, 4)
         if y == 0:
             speed = ball1.get_speedx()
             ball1.set_speedx(ball2.get_speedx())
-            ball2.set_speedx(round(speed/rand_int))
+            ball2.set_speedx(round(speed/rand_int1))
         elif x == 0:
             speed = ball1.get_speedy()
             ball1.set_speedy(ball2.get_speedy())
-            ball2.set_speedy(round(speed/rand_int))
+            ball2.set_speedy(round(speed/rand_int1))
         else:
-            rand_int1 = random.randint(1, 4)
-            rand_int2 = random.randint(1, 4)
+            rand_int2 = random.randint(2, 4)
             x_sign = self.get_sign(x)
             y_sign = self.get_sign(y)
             speed = ball1.get_speed()
@@ -230,15 +229,23 @@ class Game():
                 self.collision(self.ball_list[i], self.ball_list[j], flag_number)
                 flag_number += 1
 
+    def ball_pocket_collisions(self):
+        ball_in_pocket = pygame.sprite.spritecollideany(self.holes, self.balls, collided=pygame.sprite.collide_mask)
+        if ball_in_pocket != None:
+            self.balls_in_pocket += 1
+            ball_in_pocket.set_pocket_status(1)
+            ball_in_pocket.set_pocket_number(self.balls_in_pocket)
+            
+
     def check_for_collisions(self):
         self.ball_collisions()
+        self.ball_pocket_collisions()
 
     #functions for cleaning up sprites
-    def remove_enemies(self):
-        for en in self.enemies:
-            en.kill()
+    def remove_balls(self):
+        for ball in self.balls:
+            ball.kill()
 
     def remove_sprites(self):
-        self.player1.kill()
-        self.remove_enemies()
+        self.remove_balls()
         self.surfaces = pygame.sprite.Group()

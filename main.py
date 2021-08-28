@@ -14,9 +14,10 @@ win = pygame.display.set_mode((WIDTH, HEIGHT)) #creates a game window with given
 def main():
     running = True
     #pygame.mouse.set_visible(False)
-    game = Game(120, COLOR_WHITE, win, WIDTH, HEIGHT)
+    game = Game(60, COLOR_WHITE, win, WIDTH, HEIGHT)
     game.start()
     while running:
+        print
         for event in pygame.event.get():
             if event.type == KEYDOWN: #exit game if esc key pressed
                 if event.key == K_ESCAPE: 
