@@ -126,11 +126,9 @@ class Game():
             self.qball.set_speedy(self.stick_speed * y_sign)
         else:
             speed = self.stick_speed
-            ratio = abs(x / y)
-            y_sqr_constant = ratio**2 + 1
-            y_sqr = (speed**2)/y_sqr_constant
-            new_y = math.sqrt(y_sqr)
-            new_x = ratio * new_y
+            theta = math.atan(abs(y/x))
+            new_x = speed * math.cos(theta)
+            new_y = speed * math.sin(theta)
             self.qball.set_speedx(round(new_x) * x_sign)
             self.qball.set_speedy(round(new_y) * y_sign)
         
@@ -199,24 +197,18 @@ class Game():
         x = ball2.get_center_x() - ball1.get_center_x()
         y = ball2.get_center_y() - ball1.get_center_y()
         rand_int1 = random.randint(2, 4)
+        rand_int2 = random.randint(2, 4)
         if y == 0:
-            speed = ball1.get_speedx()
-            ball1.set_speedx(ball2.get_speedx())
-            ball2.set_speedx(round(speed/rand_int1))
+            y = 0.001
         elif x == 0:
-            speed = ball1.get_speedy()
-            ball1.set_speedy(ball2.get_speedy())
-            ball2.set_speedy(round(speed/rand_int1))
+            x = 0.001
         else:
-            rand_int2 = random.randint(2, 4)
             x_sign = self.get_sign(x)
             y_sign = self.get_sign(y)
             speed = ball1.get_speed()
-            ratio = abs(x / y)
-            y_sqr_constant = ratio**2 + 1
-            y_sqr = (speed**2)/y_sqr_constant
-            new_y = math.sqrt(y_sqr)
-            new_x = ratio * new_y
+            theta = math.atan(abs(y/x))
+            new_x = speed * math.cos(theta)
+            new_y = speed * math.sin(theta)
             ball2.set_speedx(round(new_x) * x_sign)
             ball2.set_speedy(round(new_y) * y_sign)
             ball1.set_speedx(round(ball1.get_speedx()/rand_int1)) #need to figure out what speed should be of faster ball after collision
